@@ -63,7 +63,3 @@ class TestFindPhones(unittest.TestCase):
         result = find_phones(text)
         expected = {"+7 (812) 765-4321"}
         self.assertEqual(expected, result)
-
-
-
-

@@ -46,13 +46,16 @@ def get_files(path):
 
 
 def main(path):
+    print(f"Searching in path: {path}")
     files = get_files(path)
+    print(f"Found {len(files)} files.")
     result = set()
     for path in files:
         with open(path, 'r') as file:
             text = file.read()
             result.update(find_phones(text))
     result = sorted(list(result))
+    print("\nPrinting results:")
     for r in result:
         print(r)
 
