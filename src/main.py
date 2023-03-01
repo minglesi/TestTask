@@ -36,8 +36,7 @@ def find_phones(text):
             country = "7"
             area = "812"
             number = match.replace("-", "")
-        number = number[:3] + "-" + number[3:]
-        result.add(f"+{country} ({area}) {number}")
+        result.add(int(country + area + number))
     return result
 
 
@@ -57,7 +56,9 @@ def main(path):
     result = sorted(list(result))
     print("\nPrinting results:")
     for r in result:
-        print(r)
+        r = str(r)
+        number = "+" + r[:-10] + " (" + r[-10:-7] + ") " + r[-7:-4] + "-" + r[-4:]
+        print(number)
 
 
 if __name__ == "__main__":
