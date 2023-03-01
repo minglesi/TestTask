@@ -10,12 +10,12 @@ def find_phones(text):
              re.compile(r"(\((\d{3})\) (\d{7}|\d{3}-\d{4}|\d{3}-\d{2}-\d{2}))"),
              re.compile(r"(\d{7}|\d{3}-\d{4}|\d{3}-\d{2}-\d{2})")]
     matches = set()
-    for r in regxs:
+    for r in regxs:                     ## with this FOR it eliminates the duplicates that regxs may have found
         for match in r.findall(text):
             matches.add(match)
             text = text.replace(match[0], "")
     result = set()
-    for match in matches:
+    for match in matches:               ## according to the format that the app encounters, it gives the right format
         if len(match) == 4:
             country = match[1]
             area = match[2]
@@ -51,8 +51,7 @@ def main(path):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(prog='ProgramName', description='What the program does')
+    parser = argparse.ArgumentParser(prog='Phone Numbers Formatting', description='Given a directory ')
     parser.add_argument('path')
     args = parser.parse_args()
     main(args.path)
-    
