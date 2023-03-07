@@ -25,9 +25,7 @@ def find_phones(text):
         else:
             # only number
             number = match[0].replace("-", "")
-
         result.add(int(country + area + number))
-
     return result
 
 
@@ -43,8 +41,7 @@ def main(path):
     for path in files:
         with open(path, 'r') as file:
             for line in file:
-                text = line.rstrip()
-                result.update(find_phones(text))
+                result.update(find_phones(line))
     result = sorted(list(result))
     print("\nPrinting results:")
     for r in result:
