@@ -2,46 +2,37 @@ import re
 import argparse
 import glob
 
+phone_regxp = re.compile(r"(?:^|[,. ])(?:\+(\d{1,3})(?: ?(\d{3}) ?| \((\d{3})\) )|(\d{1,3})-(\d{3})-)(\d{7}|\d{3}-\d{4}|\d{3}-\d{2}-\d{2})(?:$|[,. ])|"
+                         r"(?:^|[,. ])(?:(\d{3})[ -]?|\((\d{3})\) )(\d{7}|\d{3}-\d{4}|\d{3}-\d{2}-\d{2})(?:$|[,. ])|"
+                         r"(?:^|[,. ])(\d{7}|\d{3}-\d{4}|\d{3}-\d{2}-\d{2})(?:$|[,. ])")
+
 
 def find_phones(text):
-    regxs = [
-        # country and area code
-        re.compile(r"(\+*(\d{1,3})[ -]*(\d{3})[ -]*(\d{7}|\d{3}-\d{4}|\d{3}-\d{2}-\d{2}))"),
-        re.compile(r"(\+*(\d{1,3}) \((\d{3})\) (\d{7}|\d{3}-\d{4}|\d{3}-\d{2}-\d{2}))"),
-        # area code
-        re.compile(r"((\d{3})[ -]*(\d{7}|\d{3}-\d{4}|\d{3}-\d{2}-\d{2}))"),
-        re.compile(r"(\((\d{3})\) (\d{7}|\d{3}-\d{4}|\d{3}-\d{2}-\d{2}))"),
-        # only number
-        re.compile(r"(\d{7}|\d{3}-\d{4}|\d{3}-\d{2}-\d{2})")
-    ]
-    matches = set()
-    for r in regxs:
-        for match in r.findall(text):
-            matches.add(match)
-            text = text.replace(match[0], "")
     result = set()
-    for match in matches:
-        if len(match) == 4:
+    for match in phone_regxp.findall(text):
+        match = [m for m in match if m != ""]
+        country = "7"
+        area = "812"
+        if len(match) == 3:
             # country and area code
-            country = match[1]
-            area = match[2]
-            number = match[3].replace("-", "")
-        elif len(match) == 3:
-            # area code
-            country = "7"
+            country = match[0]
             area = match[1]
             number = match[2].replace("-", "")
+        elif len(match) == 2:
+            # area code
+            area = match[0]
+            number = match[1].replace("-", "")
         else:
             # only number
-            country = "7"
-            area = "812"
-            number = match.replace("-", "")
+            number = match[0].replace("-", "")
+
         result.add(int(country + area + number))
+
     return result
 
 
 def get_files(path):
-    return glob.glob(path+"/**/*.txt", recursive=True)
+    return glob.glob(path + "/**/*.txt", recursive=True)
 
 
 def main(path):
@@ -51,8 +42,9 @@ def main(path):
     result = set()
     for path in files:
         with open(path, 'r') as file:
-            text = file.read()
-            result.update(find_phones(text))
+            for line in file:
+                text = line.rstrip()
+                result.update(find_phones(text))
     result = sorted(list(result))
     print("\nPrinting results:")
     for r in result:
@@ -62,7 +54,10 @@ def main(path):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(prog='Phone Numbers Formatting', description='Given a directory ')
+    parser = argparse.ArgumentParser(prog='Phone Numbers Formatting', description='Given a directory with text files, '
+                                                                                  'finds and gives the desire format '
+                                                                                  'to the '
+                                                                                  'telephone numbers in it')
     parser.add_argument('path')
     args = parser.parse_args()
     main(args.path)

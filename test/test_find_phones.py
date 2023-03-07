@@ -29,7 +29,7 @@ class TestFindPhones(unittest.TestCase):
         expected = {58121234567}
         self.assertEqual(expected, result)
 
-        text = "+6-812-123-45-67"
+        text = "6-812-123-45-67"
         result = find_phones(text)
         expected = {68121234567}
         self.assertEqual(expected, result)
@@ -62,4 +62,31 @@ class TestFindPhones(unittest.TestCase):
         text = "7654321"
         result = find_phones(text)
         expected = {78127654321}
+        self.assertEqual(expected, result)
+
+    def test_find_phones_not_found(self):
+        expected = set()
+
+        text = "+1 - - -323 -1111111"
+        result = find_phones(text)
+        self.assertEqual(expected, result)
+
+        text = "+1 323 -22222228"
+        result = find_phones(text)
+        self.assertEqual(expected, result)
+
+        text = "323 - -3333333"
+        result = find_phones(text)
+        self.assertEqual(expected, result)
+
+        text = "323 444-44-445"
+        result = find_phones(text)
+        self.assertEqual(expected, result)
+
+        text = "5555555-666-66-66"
+        result = find_phones(text)
+        self.assertEqual(expected, result)
+
+        text = "999999999999999888888888888888877777777777777"
+        result = find_phones(text)
         self.assertEqual(expected, result)
